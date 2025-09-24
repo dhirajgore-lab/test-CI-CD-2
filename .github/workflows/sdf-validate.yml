@@ -1,15 +1,15 @@
-name: NetSuite SDF Auth Check
+name: SDF Validation
+run-name: validate
 
-on:
-  workflow_dispatch:   # run manually from GitHub Actions UI
+on: [push]
 
 jobs:
-  auth-test:
+  sdf-validate:
     runs-on: ubuntu-latest
     environment: Dev
 
     steps:
-      # Step 1: Checkout repo
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -30,11 +30,11 @@ jobs:
       - name: Install SuiteCloud CLI
         run: npm install -g --acceptSuiteCloudSDKLicense @oracle/suitecloud-cli
 
-      # Step 5: Recreate private key
+      # Step 5: Recreate private key from secret
       - name: Recreate private key
         run: echo "${{ secrets.PRIVATE_KEY }}" | base64 --decode > private.pem
 
-      # Step 6: Authenticate SuiteCloud
+      # Step 6: Authenticate with certificate
       - name: Authenticate SuiteCloud
         run: |
           suitecloud account:setup:ci \
@@ -43,6 +43,10 @@ jobs:
             --certificateid ${{ secrets.CERT_ID }} \
             --privatekeypath ./private.pem
 
-      # Step 7: Verify auth
+      # Step 7: Verify SuiteCloud auth list
       - name: Verify SuiteCloud accounts
         run: suitecloud account:list
+
+      # Step 8: Validate project (dry run)
+      - name: Validate SDF project
+        run: suitecloud project:validate --authid CI_SANDBOX
