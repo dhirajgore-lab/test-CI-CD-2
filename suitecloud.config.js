@@ -1,7 +1,7 @@
-const SuiteCloudJestUnitTestRunner = require('@oracle/suitecloud-unit-testing/services/SuiteCloudJestUnitTestRunner');
+//const SuiteCloudJestUnitTestRunner = require('@oracle/suitecloud-unit-testing/services/SuiteCloudJestUnitTestRunner');
 
 module.exports = {
-	defaultProjectFolder: 'src',
+	defaultProjectFolder: 'src'
 	// commands: {
 	// 	"project:deploy": {
 	// 		beforeExecuting: async args => {
