@@ -26,11 +26,11 @@ jobs:
           java-version: '17'
           distribution: 'oracle'
 
-      # Step 4: Install npm dependencies
+      # Step 4: Install npm dependencies (with license acceptance)
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --acceptsuitecloudsdklicense
 
-      # Step 5: Install SuiteCloud CLI
+      # Step 5: Install SuiteCloud CLI globally (with license acceptance)
       - name: Install SuiteCloud CLI
         run: npm i -g @oracle/suitecloud-cli@latest --acceptSuiteCloudSDKLicense
 
