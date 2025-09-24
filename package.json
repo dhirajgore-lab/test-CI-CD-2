@@ -2,12 +2,13 @@
   "name": "test-CI-CD-2",
   "version": "0.1.0",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "validate": "suitecloud project:deploy --dryrun"
   },
   "devDependencies": {
     "jest": "^29",
     "@types/jest": "^29",
     "@oracle/suitecloud-unit-testing": "^1",
     "@oracle/suitecloud-cli": "2.0.0"
-  }
+  },
 }
