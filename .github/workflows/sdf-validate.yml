@@ -40,8 +40,8 @@ jobs:
           ./node_modules/.bin/suitecloud account:setup:ci \
             --authid ${{ vars.NS_ACCOUNT_ID }} \
             --account ${{ vars.NS_ACCOUNT_ID }} \
-            --client ${{ secrets.NS_TOKEN_ID }} \
-            --secret ${{ secrets.NS_TOKEN_SECRET }}
+            --clientid ${{ secrets.NS_TOKEN_ID }} \
+            --clientsecret ${{ secrets.NS_TOKEN_SECRET }}
 
       # Step 7: Verify auth
       - name: Verify SuiteCloud accounts
