@@ -4,7 +4,7 @@ on: [push]
 jobs:
   sdf-validate:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: Dev
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -29,7 +29,5 @@ jobs:
             --tokenid ${{ secrets.NS_TOKEN_ID }} \
             --tokensecret ${{ secrets.NS_TOKEN_SECRET }}
       - name: Validate project
-        run: |
-          ./node_modules/.bin/suitecloud project:validate \
-            --authid ${{ vars.NS_ACCOUNT_ID }}
+        run: npm run validate
 
