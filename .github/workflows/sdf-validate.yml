@@ -34,6 +34,9 @@ jobs:
       - name: Recreate private key
         run: echo "${{ secrets.PRIVATE_KEY }}" | base64 --decode > private.pem
 
+      - name: Debug private key
+        run: head -n 5 private.pem
+
       # Step 6: Authenticate with certificate
       - name: Authenticate SuiteCloud
         run: |
