@@ -37,6 +37,16 @@ jobs:
       - name: Debug private key
         run: head -n 5 private.pem
 
+      - name: Debug Secrets
+        run: |
+          echo "ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}"
+          echo "CERT_ID length: ${#CERT_ID}"
+          echo "Private key length: ${#PRIVATE_KEY}"
+        env:
+          CERT_ID: ${{ secrets.CERT_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+
       # Step 6: Authenticate with certificate
       - name: Authenticate SuiteCloud
         run: |
