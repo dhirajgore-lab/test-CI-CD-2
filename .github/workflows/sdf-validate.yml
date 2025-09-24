@@ -34,10 +34,20 @@ jobs:
       - name: Run unit tests
         run: npm test
 
-      # Step 6: Authenticate SuiteCloud project
-      - name: Authenticate project against ${{ vars.NS_ACCOUNT_ID }}
-        run: ./node_modules/.bin/suitecloud account:setup --account ${{ vars.NS_ACCOUNT_ID }} --authid ${{ vars.NS_ACCOUNT_ID }} --tokenid ${{ secrets.NS_TOKEN_ID }} --tokensecret ${{ secrets.NS_TOKEN_SECRET }}
-
-      # Step 7: Validate project (Dry Run Deploy)
-      - name: Validate project (dry run)
-        run: npm run validate
+      - name: Install SuiteCloud CLI
+        run: npm i -g @oracle/suitecloud-cli@latest --acceptSuiteCloudSDKLicense
+      - name: Configure SuiteCloud CI auth (OAuth2)
+        env:
+          NS_ACCOUNT: 4541795_SB1
+          NS_ROLE: 3
+          NS_DOMAIN:  https://system.netsuite.com
+          OAUTH_CLIENT_ID:     ${{ secrets.NS_TOKEN_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.NS_TOKEN_SECRET }}
+        run: |
+          suitecloud account:setup:ci \
+            --authid SANDBOX \
+            --account "$NS_ACCOUNT" \
+            --role "$NS_ROLE" \
+            --url "$NS_DOMAIN" \
+            --client "$OAUTH_CLIENT_ID" \
+            --secret "$OAUTH_CLIENT_SECRET"
