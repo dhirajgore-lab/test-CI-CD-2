@@ -37,7 +37,7 @@ jobs:
       # Step 6: Authenticate SuiteCloud project
       - name: Authenticate project against ${{ vars.NS_ACCOUNT_ID }}
         run: |
-          ./node_modules/.bin/suitecloud account:savetoken \
+          ./node_modules/.bin/suitecloud setupaccount \
             --account ${{ vars.NS_ACCOUNT_ID }} \
             --authid ${{ vars.NS_ACCOUNT_ID }} \
             --tokenid ${{ secrets.NS_TOKEN_ID }} \
