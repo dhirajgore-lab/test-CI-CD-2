@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "test": "jest",
-    "validate": "suitecloud project:deploy --dryrun"
+    "validate": "suitecloud project:validate"
   },
   "devDependencies": {
     "jest": "^29",
