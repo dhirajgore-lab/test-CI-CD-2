@@ -48,8 +48,8 @@ jobs:
           npx suitecloud account:setup:ci \
             --authid CI_SANDBOX \
             --account ${{ vars.NS_ACCOUNT_ID }} \
-            --clientid ${{ secrets.OAUTH_CLIENT_ID }} \
-            --clientsecret ${{ secrets.OAUTH_CLIENT_SECRET }}
+            --clientId ${{ secrets.OAUTH_CLIENT_ID }} \
+            --clientSecret ${{ secrets.OAUTH_CLIENT_SECRET }}
 
       # Step 7: Verify auth
       - name: Verify SuiteCloud accounts
