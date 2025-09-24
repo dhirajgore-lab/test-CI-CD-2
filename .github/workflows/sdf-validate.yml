@@ -30,23 +30,23 @@ jobs:
       - name: Install dependencies
         run: npm ci --acceptsuitecloudsdklicense
 
-      # Step 5: Install SuiteCloud CLI globally (with license acceptance)
-      - name: Install SuiteCloud CLI
-        run: npm i -g @oracle/suitecloud-cli@latest --acceptSuiteCloudSDKLicense
+      # Step 5: Check SuiteCloud CLI version (debug)
+      - name: Check SuiteCloud CLI version
+        run: npx suitecloud --version
 
-      # Step 6: Authenticate against NetSuite using TBA
+      # Step 6: Authenticate against NetSuite using OAuth2
       - name: Authenticate project against ${{ vars.NS_ACCOUNT_ID }}
         run: |
-          ./node_modules/.bin/suitecloud account:setup:ci \
+          npx suitecloud account:setup:ci \
             --authid ${{ vars.NS_ACCOUNT_ID }} \
             --account ${{ vars.NS_ACCOUNT_ID }} \
             --clientid ${{ secrets.NS_TOKEN_ID }} \
             --clientsecret ${{ secrets.NS_TOKEN_SECRET }}
 
-      # Step 7: Verify auth
+      # Step 7: Verify accounts
       - name: Verify SuiteCloud accounts
-        run: ./node_modules/.bin/suitecloud account:list
+        run: npx suitecloud account:list
 
-      # Step 8: Run validation (dry run deployment)
+      # Step 8: Validate project (dry run deployment)
       - name: Validate project
         run: npm run validate
