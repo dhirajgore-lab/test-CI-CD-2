@@ -1,82 +1,48 @@
-name: SDF Validation (Debug)
-run-name: validate with debug
+name: SDF Validation
+run-name: validate
+
 on: [push]
+
 jobs:
   sdf-validate:
     runs-on: ubuntu-latest
     environment: Dev
+
     steps:
+      # Step 1: Checkout repository
       - name: Check out repository code
         uses: actions/checkout@v3
-      
-      - name: Debug - Check if secrets and variables are set
-        run: |
-          echo "=== DEBUGGING ENVIRONMENT CONFIGURATION ==="
-          echo ""
-          
-          # Check NS_ACCOUNT_ID (variable - less sensitive, but still mask most of it)
-          if [ -n "${{ vars.NS_ACCOUNT_ID }}" ]; then
-            ACCOUNT_LENGTH=${#"${{ vars.NS_ACCOUNT_ID }}"}
-            echo "✅ NS_ACCOUNT_ID is set (length: $ACCOUNT_LENGTH characters)"
-            # Show only first 4 characters for debugging
-            MASKED_ACCOUNT=$(echo "${{ vars.NS_ACCOUNT_ID }}" | sed 's/\(.....\).*/\1***/')
-            echo "   Account starts with: $MASKED_ACCOUNT"
-          else
-            echo "❌ NS_ACCOUNT_ID is NOT set"
-          fi
-          
-          # Check NS_TOKEN_ID (secret - never show actual value)
-          if [ -n "${{ secrets.NS_TOKEN_ID }}" ]; then
-            echo "✅ NS_TOKEN_ID is set (secret)"
-          else
-            echo "❌ NS_TOKEN_ID is NOT set"
-          fi
-          
-          # Check NS_TOKEN_SECRET (secret - never show actual value)
-          if [ -n "${{ secrets.NS_TOKEN_SECRET }}" ]; then
-            echo "✅ NS_TOKEN_SECRET is set (secret)"
-          else
-            echo "❌ NS_TOKEN_SECRET is NOT set"
-          fi
-          
-          echo ""
-          echo "=== END DEBUG ==="
-      
-      - name: Install node
+
+      # Step 2: Install Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
-      
+
+      # Step 3: Install JDK
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'oracle'
-      
-      - name: Install package
+
+      # Step 4: Install npm dependencies
+      - name: Install dependencies
         run: npm ci --acceptsuitecloudsdklicense
-      
+
+      # Step 5: Run unit tests
       - name: Run unit tests
         run: npm test
-        continue-on-error: true
-      
+
+      # Step 6: Authenticate SuiteCloud project
       - name: Authenticate project against ${{ vars.NS_ACCOUNT_ID }}
         run: |
-          echo "Attempting authentication with account: ${{ vars.NS_ACCOUNT_ID }}"
           ./node_modules/.bin/suitecloud account:savetoken \
             --account ${{ vars.NS_ACCOUNT_ID }} \
             --authid ${{ vars.NS_ACCOUNT_ID }} \
             --tokenid ${{ secrets.NS_TOKEN_ID }} \
             --tokensecret ${{ secrets.NS_TOKEN_SECRET }}
-      
-      - name: Validate project
-        run: |
-          # First check if validate script exists
-          if npm run | grep -q "validate"; then
-            echo "Running: npm run validate"
-            npm run validate
-          else
-            echo "validate script not found in package.json, using direct command"
-            ./node_modules/.bin/suitecloud project:validate \
-              --authid ${{ vars.NS_ACCOUNT_ID }}
-          fi
+
+      # Step 7: Validate project (Dry Run Deploy)
+      - name: Validate project (dry run)
+        run: npm run validate
