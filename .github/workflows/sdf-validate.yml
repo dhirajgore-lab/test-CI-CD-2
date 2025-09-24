@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --acceptsuitecloudsdklicense
 
-      # Step 5: Check SuiteCloud CLI version (debug)
+      # Step 5: Check SuiteCloud CLI version
       - name: Check SuiteCloud CLI version
         run: npx suitecloud --version
 
@@ -38,15 +38,15 @@ jobs:
       - name: Authenticate project against ${{ vars.NS_ACCOUNT_ID }}
         run: |
           npx suitecloud account:setup:ci \
-            --authid ${{ vars.NS_ACCOUNT_ID }} \
+            --authid CI_SANDBOX \
             --account ${{ vars.NS_ACCOUNT_ID }} \
-            --clientid ${{ secrets.NS_TOKEN_ID }} \
-            --clientsecret ${{ secrets.NS_TOKEN_SECRET }}
+            --client-id ${{ secrets.NS_CLIENT_ID }} \
+            --client-secret ${{ secrets.NS_CLIENT_SECRET }}
 
-      # Step 7: Verify accounts
+      # Step 7: Verify auth
       - name: Verify SuiteCloud accounts
         run: npx suitecloud account:list
 
-      # Step 8: Validate project (dry run deployment)
+      # Step 8: Run validation (dry run deployment)
       - name: Validate project
         run: npm run validate
