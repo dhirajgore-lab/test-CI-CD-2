@@ -3,62 +3,48 @@ run-name: validate
 
 on: [push]
 
-jobs:
-  sdf-validate:
+sdf-validate:
     runs-on: ubuntu-latest
     environment: Dev
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
-      - name: Setup Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: 'lts/*'
 
-      # Step 3: Setup Java
-      - name: Setup JDK
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'oracle'
 
-      # Step 4: Install SuiteCloud CLI
-      - name: Install SuiteCloud CLI
-        run: npm install -g --acceptSuiteCloudSDKLicense @oracle/suitecloud-cli
+      - name: Install dependencies
+        run: npm ci --acceptsuitecloudsdklicense
 
-      # Step 5: Recreate private key from secret
-      - name: Recreate private key
-        run: echo "${{ secrets.PRIVATE_KEY }}" | base64 --decode > private.pem
+      # Add node_modules/.bin to PATH
+      - name: Add suitecloud CLI to PATH
+        run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
 
-      - name: Debug private key
-        run: head -n 5 private.pem
-
-      - name: Debug Secrets
+      # Restore credentials file from secret
+      - name: Restore NetSuite credentials
         run: |
-          echo "ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}"
-          echo "CERT_ID length: ${#CERT_ID}"
-          echo "Private key length: ${#PRIVATE_KEY}"
-        env:
-          CERT_ID: ${{ secrets.CERT_ID }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          mkdir -p ~/.suitecloud-sdk/credentials
+          echo "${{ secrets.NS_CREDENTIALS_B64 }}" | base64 --decode > ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
-
-      # Step 6: Authenticate with certificate
-      - name: Authenticate SuiteCloud
+      # Set CI/CD environment variables
+      - name: Set CI/CD environment variables
         run: |
-          suitecloud account:setup:ci --account ${{ secrets.ACCOUNT_ID }} --authid CI-CD-test --certificateid ${{ secrets.CERT_ID }} --privatekeypath ./private.pem
+          echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
+          echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
+      # Optional: Test auth
+      - name: Test SuiteCloud auth
+        run: suitecloud list:files --account ${{ secrets.NS_ACCOUNT_ID }}
 
-      # Step 7: Verify SuiteCloud auth list
-      - name: Verify SuiteCloud accounts
-        run: suitecloud account:list
-
-      # Step 8: Validate project (dry run)
-      - name: Validate SDF project
-        run: suitecloud project:validate --authid CI_SANDBOX
-
-          
+      # Deploy/validate project
+      - name: Validate project
+        run: suitecloud project:deploy --dryrun --account ${{ secrets.NS_ACCOUNT_ID }}
