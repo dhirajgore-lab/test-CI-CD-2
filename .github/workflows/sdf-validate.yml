@@ -3,7 +3,8 @@ run-name: validate
 
 on: [push]
 
-sdf-validate:
+jobs:
+  sdf-validate:
     runs-on: ubuntu-latest
     environment: Dev
 
@@ -41,10 +42,12 @@ sdf-validate:
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
-      # Optional: Test auth
+     # Optional: Test auth
       - name: Test SuiteCloud auth
         run: suitecloud list:files --account ${{ secrets.NS_ACCOUNT_ID }}
 
       # Deploy/validate project
       - name: Validate project
         run: suitecloud project:deploy --dryrun --account ${{ secrets.NS_ACCOUNT_ID }}
+
+          
