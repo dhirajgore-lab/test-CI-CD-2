@@ -50,11 +50,7 @@ jobs:
       # Step 6: Authenticate with certificate
       - name: Authenticate SuiteCloud
         run: |
-          suitecloud account:setup:ci \
-            --authid CI_SANDBOX \
-            --account ${{ secrets.ACCOUNT_ID }} \
-            --certificateid ${{ secrets.CERT_ID }} \
-            --privatekeypath ./private.pem
+          suitecloud account:setup:ci --account ${{ secrets.ACCOUNT_ID }} --authid CI-CD-test --certificateid ${{ secrets.CERT_ID }} --privatekeypath ./private.pem
 
 
       # Step 7: Verify SuiteCloud auth list
