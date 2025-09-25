@@ -44,8 +44,8 @@ jobs:
 
      # Optional: Test auth
       - name: Test SuiteCloud auth
-        run: suitecloud list:files --account ${{ secrets.NS_ACCOUNT_ID }}
+        run: suitecloud file:list --authid ci
 
       # Deploy/validate project
       - name: Validate project
-        run: suitecloud project:deploy --dryrun --account ${{ secrets.NS_ACCOUNT_ID }}
+        run: suitecloud project:deploy --authid ci --dryrun
