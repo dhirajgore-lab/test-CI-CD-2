@@ -64,4 +64,4 @@ jobs:
           echo "${{ secrets.NS_CREDENTIALS_B64 }}" | head -c 100
 
       - name: Set up accounts
-        run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-1 --certificateid 9YbvTeb1MhQXt2IDY1ihJMfJu3XdqOIqj5MDAKKQHCE ${{ secrets.NS_CREDENTIALS_B64}}
+        run: suitecloud account:setup:ci --authid ci-cd-1 --certificateid 9YbvTeb1MhQXt2IDY1ihJMfJu3XdqOIqj5MDAKKQHCE --privatekeypath https://github.com/dhirajgore-lab/test-CI-CD-2/blob/141895423f7bc6d01ac6dc061665a2d1b9ca76da/new_certificate.p12 --account 4541795_SB1
