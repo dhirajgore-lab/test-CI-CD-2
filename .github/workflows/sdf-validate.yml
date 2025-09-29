@@ -73,7 +73,7 @@ jobs:
 
       #set up account
       - name: Set up account
-        run: suitecloud account:setup:ci --account ${{secrets.NS_ACCOUNT_ID}} --authid myAuthId --certificateid ${{ secrets.CERT_ID}} --privatekeypath ${{secrets.NS_CI_PASSKEY}}
+        run: suitecloud account:setup:ci --account ${{secrets.NS_ACCOUNT_ID}} --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID}} --privatekeypath ${{secrets.NS_CI_PASSKEY}}
  
      # Optional: Test list object
       - name: Test SuiteCloud auth
