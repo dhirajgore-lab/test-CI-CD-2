@@ -1,5 +1,5 @@
 name: SDF Validation
-run-name: validate
+run-name: Copy Github to Netsuite Action
 
 on: [push]
 
@@ -20,8 +20,16 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21.0.8'
           distribution: 'oracle'
+
+      - name: Debug environment
+        run: |
+          echo "SUITECLOUD_CI: $SUITECLOUD_CI"
+          echo "Java version:"
+          java -version
+          echo "SuiteCloud CLI version:"
+          suitecloud --version
 
       - name: Install dependencies
         run: npm ci --acceptsuitecloudsdklicense
