@@ -56,5 +56,5 @@ jobs:
           echo "Certificate dates:"
           openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -dates || echo "Failed to extract dates"
 
-      - name: Set up account
+      - name: Set up accounts
         run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-1 --certificateid ${{ secrets.CERT_ID }} --privatekeypath ${{ secrets.NS_CREDENTIALS_B64 }}
