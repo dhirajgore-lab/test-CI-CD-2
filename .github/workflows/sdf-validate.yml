@@ -54,13 +54,11 @@ jobs:
           echo "${{ secrets.P12 }}" | base64 -d > ~/.suitecloud-sdk/credentials/credentials_ci.p12
           chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
-      - name: Verify credentials setup
+      - name: Restore NetSuite credentials
         run: |
-          ls -la ~/.suitecloud-sdk/credentials/
-          echo "File size: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
-          echo "Environment variables set:"
-          echo "SUITECLOUD_CI: $SUITECLOUD_CI"
-          echo "SUITECLOUD_CI_PASSKEY is set: $([ -n "$SUITECLOUD_CI_PASSKEY" ] && echo "Yes" || echo "No")"
+          mkdir -p ~/.suitecloud-sdk/credentials
+          echo "${{ secrets.NS_CREDENTIALS_B64 }}" | base64 -d > ~/.suitecloud-sdk/credentials/credentials_ci.p12
+          chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
       - name: Set CI/CD environment variables
         run: |
