@@ -38,6 +38,3 @@ Thumbs.db
 
 # Project config
 project.json
-
-# Only ignore PEM files in the root directory
-/*.pem

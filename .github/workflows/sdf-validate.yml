@@ -75,4 +75,4 @@ jobs:
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
       - name: Set up accounts
-        run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-auth-sb --certificateid 9YbvTeb1MhQXt2IDY1ihJMfJu3XdqOIqj5MDAKKQHCE --privatekeypath ${{ secrets.PRIVATE_KEY}} 
+        run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-auth-sb --certificateid zDbiEchk3RUGzR0AN7eYcF6yIwKkhZx8tikFb2qJdzw --privatekeypath ${{ secrets.PRIVATE_KEY}} 
