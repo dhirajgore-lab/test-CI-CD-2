@@ -39,22 +39,28 @@ jobs:
         run: |
           mkdir -p ~/.suitecloud-sdk/credentials
           echo "${{ secrets.NS_CREDENTIALS_B64 }}" | base64 --decode > ~/.suitecloud-sdk/credentials/credentials_ci.p12
+          chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
-      - name: Set file permissions
-        run: chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
-
-      - name: Set CI/CD environment variables
+      - name: Verify file creation
         run: |
-          echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
-          echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
+          ls -la ~/.suitecloud-sdk/credentials/
+          echo "File size: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
 
-      - name: Debug certificate details
-        run: |
-          echo "Certificate subject and serial:"
-          openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -subject -serial -fingerprint -sha256 || echo "Failed to extract certificate details"
+      # - name: Set file permissions
+      #   run: chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
+
+      # - name: Set CI/CD environment variables
+      #   run: |
+      #     echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
+      #     echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
+
+      # - name: Debug certificate details
+      #   run: |
+      #     echo "Certificate subject and serial:"
+      #     openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -subject -serial -fingerprint -sha256 || echo "Failed to extract certificate details"
           
-          echo "Certificate dates:"
-          openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -dates || echo "Failed to extract dates"
+      #     echo "Certificate dates:"
+      #     openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -dates || echo "Failed to extract dates"
 
       - name: Debug environment
         run: |
@@ -63,5 +69,10 @@ jobs:
           echo "First 100 characters:"
           echo "${{ secrets.NS_CREDENTIALS_B64 }}" | head -c 100
 
+      - name: Set CI/CD environment variables
+        run: |
+          echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
+          echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
+
       - name: Set up accounts
-        run: suitecloud account:setup:ci --authid ci-cd-1 --certificateid 9YbvTeb1MhQXt2IDY1ihJMfJu3XdqOIqj5MDAKKQHCE --privatekeypath https://github.com/dhirajgore-lab/test-CI-CD-2/blob/141895423f7bc6d01ac6dc061665a2d1b9ca76da/new_certificate.p12 --account 4541795_SB1
+        run: suitecloud account:setup:ci --authid ci-cd-1 --certificateid 9YbvTeb1MhQXt2IDY1ihJMfJu3XdqOIqj5MDAKKQHCE --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12 --account 4541795_SB1
