@@ -43,7 +43,7 @@ jobs:
       - name: Restore NetSuite credentials
         run: |
           mkdir -p ~/.suitecloud-sdk/credentials
-          echo "${{ secrets.P12 }}" | base64 --decode > ~/.suitecloud-sdk/credentials/credentials_ci.p12
+          echo "${{ secrets.P12 }}" | base64 -d > ~/.suitecloud-sdk/credentials/credentials_ci.p12
           chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
       - name: Verify credentials setup
