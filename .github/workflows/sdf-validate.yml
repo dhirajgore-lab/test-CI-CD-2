@@ -22,15 +22,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'oracle'
-
+          
       - name: Install dependencies
         run: npm ci --acceptsuitecloudsdklicense
 
-      # Add node_modules/.bin to PATH
+        # Add node_modules/.bin to PATH
       - name: Add suitecloud CLI to PATH
         run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
 
-      # Restore credentials file from secret
+        # Restore credentials file from secret
       - name: Restore NetSuite credentials
         run: |
           mkdir -p ~/.suitecloud-sdk/credentials
@@ -64,18 +64,18 @@ jobs:
               fi
             fi
 
-      # Set CI/CD environment variables
+        # Set CI/CD environment variables
       - name: Set CI/CD environment variables
         run: |
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
 
-      #set up account
+        #set up account
       - name: Set up account
-        run: suitecloud account:setup:ci --account ${{ secrets.ACCOUNT_ID}} --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID}} --privatekeypath ${{secrets.NS_CI_PASSKEY}}
- 
-     # Optional: Test list object
+        run: suitecloud account:setup:ci --account ${{ secrets.NS_ACCOUNT_ID }} --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
+     
+        # Optional: Test list object
       - name: Test SuiteCloud auth
         run: suitecloud object:list  
 
