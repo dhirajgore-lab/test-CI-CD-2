@@ -57,4 +57,4 @@ jobs:
           suitecloud --version
 
       - name: Set up account
-        run: suitecloud account:setup:ci --account ${{ secrets.NS_ACCOUNT_ID }} --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
+        run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
