@@ -1,5 +1,5 @@
 name: SDF Validation
-run-name: Copy Github to Netsuite Action
+run-name: validate
 
 on: [push]
 
@@ -15,13 +15,38 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '18'
 
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21.0.8'
+          java-version: '17'
           distribution: 'oracle'
+
+      - name: Install dependencies
+        run: npm ci --acceptsuitecloudsdklicense
+
+      - name: Add suitecloud CLI to PATH
+        run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
+
+      - name: Verify CLI installation
+        run: |
+          echo "Checking if suitecloud CLI is available..."
+          which suitecloud || echo "CLI not found in PATH"
+          ls -la $(pwd)/node_modules/.bin/suitecloud || echo "CLI binary not found"
+
+      - name: Restore NetSuite credentials
+        run: |
+          mkdir -p ~/.suitecloud-sdk/credentials
+          echo "${{ secrets.NS_CREDENTIALS_B64 }}" | base64 --decode > ~/.suitecloud-sdk/credentials/credentials_ci.p12
+
+      - name: Set file permissions
+        run: chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
+
+      - name: Set CI/CD environment variables
+        run: |
+          echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
+          echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
       - name: Debug environment
         run: |
@@ -31,61 +56,5 @@ jobs:
           echo "SuiteCloud CLI version:"
           suitecloud --version
 
-      - name: Install dependencies
-        run: npm ci --acceptsuitecloudsdklicense
-
-        # Add node_modules/.bin to PATH
-      - name: Add suitecloud CLI to PATH
-        run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
-
-        # Restore credentials file from secret
-      - name: Restore NetSuite credentials
-        run: |
-          mkdir -p ~/.suitecloud-sdk/credentials
-          echo "${{ secrets.NS_CREDENTIALS_B64 }}" | base64 --decode > ~/.suitecloud-sdk/credentials/credentials_ci.p12
-
-      - name: Verify credentials file was created
-        run: |
-          echo "Checking if credentials file exists..."
-          if [ -f ~/.suitecloud-sdk/credentials/credentials_ci.p12 ]; then
-            echo "✓ credentials_ci.p12 file exists"
-            echo "File size: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
-            ls -la ~/.suitecloud-sdk/credentials/
-          else
-            echo "✗ credentials_ci.p12 file NOT found"
-            echo "Directory contents:"
-            ls -la ~/.suitecloud-sdk/credentials/ || echo "credentials directory doesn't exist"
-          fi
-
-      - name: Verify p12 file format
-        run: |
-            echo "Verifying p12 file format..."
-            if openssl pkcs12 -info -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -noout -passin pass:"${{ secrets.NS_CI_PASSKEY }}" 2>/dev/null; then
-              echo "✓ P12 file is valid and passkey is correct"
-            else
-              echo "⚠️  P12 file validation failed with passkey"
-              echo "Testing without passkey..."
-              if openssl pkcs12 -info -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -noout -passin pass:"" 2>/dev/null; then
-                echo "✓ P12 file is valid but no passkey needed"
-              else
-                echo "✗ P12 file appears to be corrupted or invalid format"
-              fi
-            fi
-
-         #Set CI/CD environment variables
-      - name: Set CI/CD environment variables
-        run: |
-          echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
-          echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
-
-        #set up account
       - name: Set up account
-        run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
-     
-        # Optional: Test list object
-      - name: Test SuiteCloud auth
-        run: suitecloud object:list  
-
-      #  Deploy/validate project
-      # - name: Validate project
-      #   run: suitecloud project:deploy --authid ci --dryrun
+        run: suitecloud account:setup:ci --account ${{ secrets.NS_ACCOUNT_ID }} --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
