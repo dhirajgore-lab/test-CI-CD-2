@@ -40,6 +40,14 @@ jobs:
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
+      - name: Debug base64 secret
+        run: |
+          echo "Secret first 100 chars:"
+          echo "${{ secrets.P12 }}" | head -c 100
+          echo ""
+          echo "Secret length: $(echo "${{ secrets.P12 }}" | wc -c)"
+          echo "Contains valid base64: $(echo "${{ secrets.P12 }}" | base64 -d > /dev/null 2>&1 && echo "YES" || echo "NO")"
+
       - name: Restore NetSuite credentials
         run: |
           mkdir -p ~/.suitecloud-sdk/credentials
