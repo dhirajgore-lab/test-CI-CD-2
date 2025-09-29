@@ -48,13 +48,13 @@ jobs:
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
-      - name: Debug environment
+      - name: Debug certificate details
         run: |
-          echo "SUITECLOUD_CI: $SUITECLOUD_CI"
-          echo "Java version:"
-          java -version
-          echo "SuiteCloud CLI version:"
-          suitecloud --version
+          echo "Certificate subject and serial:"
+          openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -subject -serial -fingerprint -sha256 || echo "Failed to extract certificate details"
+          
+          echo "Certificate dates:"
+          openssl pkcs12 -in ~/.suitecloud-sdk/credentials/credentials_ci.p12 -clcerts -nokeys -passin pass:"${{ secrets.NS_CI_PASSKEY }}" | openssl x509 -noout -dates || echo "Failed to extract dates"
 
       - name: Set up account
         run: suitecloud account:setup:ci --account 4541795_SB1 --authid ci-cd-auth-sb --certificateid ${{ secrets.CERT_ID }} --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
