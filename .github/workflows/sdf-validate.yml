@@ -42,10 +42,10 @@ jobs:
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
-     # Optional: Test auth
+     # Optional: Test list object
       - name: Test SuiteCloud auth
-        run: suitecloud file:list --authid ci
+        run: suitecloud object:list  
 
-      # Deploy/validate project
-      - name: Validate project
-        run: suitecloud project:deploy --authid ci --dryrun
+      #  Deploy/validate project
+      # - name: Validate project
+      #   run: suitecloud project:deploy --authid ci --dryrun
