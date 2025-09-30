@@ -50,13 +50,13 @@ jobs:
           ls -la ~/.suitecloud-sdk/credentials/
           echo "File sizee: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
 
-      - name: Set up account
-        run: |
-          suitecloud account:setup:ci \
-            --account ${{ secrets.NS_ACCOUNT_ID }} \
-            --authid github-actions \
-            --certificateid ${{ secrets.CERT_ID }} \
-            --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
+      # - name: Set up account
+      #   run: |
+      #     suitecloud account:setup:ci \
+      #       --account ${{ secrets.NS_ACCOUNT_ID }} \
+      #       --authid github-actions \
+      #       --certificateid ${{ secrets.CERT_ID }} \
+      #       --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
       - name: Test authentication
         run: suitecloud account:list
