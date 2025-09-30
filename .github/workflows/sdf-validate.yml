@@ -29,34 +29,23 @@ jobs:
       - name: Add suitecloud CLI to PATH
         run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
 
-      - name: Verify CLI installation
-        run: |
-          echo "Checking if suitecloud CLI is available..."
-          suitecloud --version
-
       - name: Set CI/CD environment variables
         run: |
           echo "SUITECLOUD_CI=1" >> $GITHUB_ENV
           echo "SUITECLOUD_CI_PASSKEY=${{ secrets.NS_CI_PASSKEY }}" >> $GITHUB_ENV
 
-      - name: Restore NetSuite credentials
+      - name: Restore private key
         run: |
-          mkdir -p ~/.suitecloud-sdk/credentials
-          echo "${{ secrets.NS_CRED_P12_B64 }}" | base64 -d > ~/.suitecloud-sdk/credentials/credentials_ci.p12
-          chmod 600 ~/.suitecloud-sdk/credentials/credentials_ci.p12
+          echo "${{ secrets.PRIVATE_KEY_PEM_B64 }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
 
-      - name: Verify credentials file
+      - name: Set up account
         run: |
-          ls -la ~/.suitecloud-sdk/credentials/
-          echo "File sizee: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
+          suitecloud account:setup:ci \
+            --account ${{ secrets.NS_ACCOUNT_ID }} \
+            --authid github-actions \
+            --certificateid ${{ secrets.CERT_ID }} \
+            --privatekeypath ./private_key.pem
 
-      # - name: Set up account
-      #   run: |
-      #     suitecloud account:setup:ci \
-      #       --account ${{ secrets.NS_ACCOUNT_ID }} \
-      #       --authid github-actions \
-      #       --certificateid ${{ secrets.CERT_ID }} \
-      #       --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
-
-      - name: Test authentication
+      - name: List objects
         run: suitecloud object:list --type advancedpdftemplate centercategory
