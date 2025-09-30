@@ -48,4 +48,4 @@ jobs:
             --privatekeypath ./private_key.pem
 
       - name: List objects
-        run: suitecloud object:list --type advancedpdftemplate centercategory
+        run: suitecloud project:deploy
