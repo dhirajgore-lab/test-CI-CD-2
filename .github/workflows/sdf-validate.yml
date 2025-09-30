@@ -59,4 +59,4 @@ jobs:
       #       --privatekeypath ~/.suitecloud-sdk/credentials/credentials_ci.p12
 
       - name: Test authentication
-        run: suitecloud account:list
+        run: suitecloud object:list --type advancedpdftemplate centercategory
