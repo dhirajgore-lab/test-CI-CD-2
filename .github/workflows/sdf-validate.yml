@@ -48,7 +48,7 @@ jobs:
       - name: Verify credentials file
         run: |
           ls -la ~/.suitecloud-sdk/credentials/
-          echo "File size: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
+          echo "File sizee: $(stat -c%s ~/.suitecloud-sdk/credentials/credentials_ci.p12) bytes"
 
       - name: Set up account
         run: |
