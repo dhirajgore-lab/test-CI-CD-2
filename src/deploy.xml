@@ -6,7 +6,7 @@
         <path>~/FileCabinet/*</path>
     </files>
     <objects>
-        <path>~/Objects/custbody_fictiv_test.xml</path>
+        <path>~/Objects/custbody1.xml</path>
     </objects>
     <translationimports>
         <path>~/Translations/*</path>

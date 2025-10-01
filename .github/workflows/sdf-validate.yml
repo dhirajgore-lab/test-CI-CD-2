@@ -1,7 +1,9 @@
 name: SDF Validation
 run-name: validate
 
-on: [push]
+on:
+  push:
+    branches: [add-actions-config]  # Only triggers on push to branch which is named here
 
 jobs:
   sdf-validate:
