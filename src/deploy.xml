@@ -1,5 +1,6 @@
 <deploy>
     <objects>
         <path>~/Objects/Contact</path>
+        <path>~/Objects/Account</path>
     </objects>
 </deploy>
